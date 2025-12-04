@@ -1,0 +1,64 @@
+from . import db
+from datetime import datetime
+
+class Division(db.Model):
+    __tablename__ = 'divisions'
+    division_name = db.Column(db.String(50), primary_key=True)
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))  # division head
+
+class Department(db.Model):
+    __tablename__ = 'departments'
+    department_name = db.Column(db.String(50), primary_key=True)
+    budget = db.Column(db.Float)
+    division_name = db.Column(db.String(50), db.ForeignKey('divisions.division_name'))
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))  # department head
+
+class Building(db.Model):
+    __tablename__ = 'buildings'
+    building_code = db.Column(db.String(10), primary_key=True)
+    name = db.Column(db.String(100))
+    year_bought = db.Column(db.Integer)
+    cost = db.Column(db.Float)
+
+class Project(db.Model):
+    __tablename__ = 'projects'
+    project_number = db.Column(db.Integer, primary_key=True)
+    budget = db.Column(db.Float)
+    date_started = db.Column(db.Date)
+    date_ended = db.Column(db.Date)
+    manager_id = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))
+
+class Employee(db.Model):
+    __tablename__ = 'employees'
+    employee_no = db.Column(db.Integer, primary_key=True)
+    employee_name = db.Column(db.String(100))
+    phone_number = db.Column(db.String(20))
+    title = db.Column(db.String(50))
+    department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name'))
+
+class EmployeeProject(db.Model):
+    __tablename__ = 'employee_projects'
+    id = db.Column(db.Integer, primary_key=True)
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))
+    project_number = db.Column(db.Integer, db.ForeignKey('projects.project_number'))
+    hours_worked = db.Column(db.Float)
+    role = db.Column(db.String(50))
+
+class Room(db.Model):
+    __tablename__ = 'rooms'
+    office_number = db.Column(db.String(10), primary_key=True)
+    square_feet = db.Column(db.Float)
+    type = db.Column(db.String(20))
+    building_code = db.Column(db.String(10), db.ForeignKey('buildings.building_code'))
+
+class EmployeeRoom(db.Model):
+    __tablename__ = 'employee_rooms'
+    id = db.Column(db.Integer, primary_key=True)
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))
+    office_number = db.Column(db.String(10), db.ForeignKey('rooms.office_number'))
+
+class DepartmentRoom(db.Model):
+    __tablename__ = 'department_rooms'
+    id = db.Column(db.Integer, primary_key=True)
+    department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name'))
+    office_number = db.Column(db.String(10), db.ForeignKey('rooms.office_number'))
