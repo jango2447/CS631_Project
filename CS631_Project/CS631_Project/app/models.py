@@ -4,14 +4,15 @@ from datetime import datetime
 class Division(db.Model):
     __tablename__ = 'divisions'
     division_name = db.Column(db.String(50), primary_key=True)
-    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))  # division head
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no', name='fk_divisions_employee_no'))  # division head
 
 class Department(db.Model):
     __tablename__ = 'departments'
     department_name = db.Column(db.String(50), primary_key=True)
     budget = db.Column(db.Float)
-    division_name = db.Column(db.String(50), db.ForeignKey('divisions.division_name'))
-    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))  # department head
+    division_name = db.Column(db.String(50), db.ForeignKey('divisions.division_name', name='fk_departments_division_name'))
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no', name='fk_departments_employee_no'))  # department head
+
 
 class Building(db.Model):
     __tablename__ = 'buildings'
@@ -34,7 +35,7 @@ class Employee(db.Model):
     employee_name = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     title = db.Column(db.String(50))
-    department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name'))
+    department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name', name='fk_employees_department_name'))
 
 class EmployeeProject(db.Model):
     __tablename__ = 'employee_projects'
@@ -62,3 +63,8 @@ class DepartmentRoom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name'))
     office_number = db.Column(db.String(10), db.ForeignKey('rooms.office_number'))
+
+class EmployeeTitle(db.Model):
+    __tablename__ = 'employee_titles'
+    title = db.Column(db.String(50), primary_key=True)
+    salary = db.Column(db.Float)

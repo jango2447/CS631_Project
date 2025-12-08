@@ -31,4 +31,7 @@ def create_app():
     app.register_blueprint(project_bp, url_prefix='/api/project')
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
+    from .cli import register_commands
+    register_commands(app)
+
     return app
