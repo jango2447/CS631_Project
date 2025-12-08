@@ -40,6 +40,9 @@
     <Compile Include="CS631_Project\app\cli.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CS631_Project\app\salary.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="manage.py">
       <SubType>Code</SubType>
     </Compile>

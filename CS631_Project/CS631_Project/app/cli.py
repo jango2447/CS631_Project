@@ -1,6 +1,7 @@
 import click
 from flask.cli import with_appcontext
 from datetime import date
+from .salary import pay_salaries
 from .models import (
     db,
     Division,
@@ -151,5 +152,13 @@ def seed_db():
     db.session.commit()
     click.echo("Database cleared and seeded with fresh sample data successfully!")
 
+@click.command('pay-salaries')
+@with_appcontext
+def pay_salaries_command():
+    today = date.today()
+    pay_salaries(today)
+    click.echo(f"Salaries paid for {today.strftime('%B %Y')}")
+
 def register_commands(app):
     app.cli.add_command(seed_db)
+    app.cli.add_command(pay_salaries_command)
