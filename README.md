@@ -29,7 +29,7 @@ flask db downgrade -Roll back the most recent migration
 
 how to add data
 \Repos\CS631_Project\CS631_Project\CS631_Project> flask seed-db
-flash seed-db
+flask seed-db
 
 How to start the web application
 send $env:FLASK_APP="manage.py"

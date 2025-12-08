@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Human Resources - Employees</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Employee No</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Title</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for emp in employees %}
+        <tr>
+            <td>{{ emp.employee_no }}</td>
+            <td>{{ emp.employee_name }}</td>
+            <td>{{ emp.phone_number }}</td>
+            <td>{{ emp.title }}</td>
+            <td>{{ emp.department_name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('main.add_employee') }}" class="btn btn-primary mb-3">Add Employee</a>
+{% endblock %}

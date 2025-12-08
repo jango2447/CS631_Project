@@ -63,6 +63,8 @@
     <Folder Include="CS631_Project\app\templates\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CS631_Project\app\templates\add_employee.html" />
+    <Content Include="CS631_Project\app\templates\human_resources.html" />
     <Content Include="requirements.txt" />
     <Content Include="CS631_Project\app\static\content\bootstrap.css" />
     <Content Include="CS631_Project\app\static\content\bootstrap.min.css" />

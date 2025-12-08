@@ -1,5 +1,6 @@
 from . import db
 from datetime import datetime
+from datetime import date
 
 class Division(db.Model):
     __tablename__ = 'divisions'
@@ -31,7 +32,7 @@ class Project(db.Model):
 
 class Employee(db.Model):
     __tablename__ = 'employees'
-    employee_no = db.Column(db.Integer, primary_key=True)
+    employee_no = db.Column(db.Integer, primary_key=True, autoincrement=True)
     employee_name = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     title = db.Column(db.String(50))
@@ -68,3 +69,18 @@ class EmployeeTitle(db.Model):
     __tablename__ = 'employee_titles'
     title = db.Column(db.String(50), primary_key=True)
     salary = db.Column(db.Float)
+
+class SalaryPayment(db.Model):
+    __tablename__ = 'salary_payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    employee_no = db.Column(db.Integer, db.ForeignKey('employees.employee_no'), nullable=False)
+    payment_date = db.Column(db.Date, default=date.today, nullable=False)
+    gross_salary = db.Column(db.Float, nullable=False)
+    federal_tax = db.Column(db.Float, nullable=False)
+    state_tax = db.Column(db.Float, nullable=False)
+    other_tax = db.Column(db.Float, nullable=False)
+    net_salary = db.Column(db.Float, nullable=False)
+
+    # Relationship for easy access to employee from salary payment
+    employee = db.relationship('Employee', backref=db.backref('salary_payments', lazy=True))

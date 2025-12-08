@@ -13,6 +13,7 @@ from .models import (
     EmployeeRoom,
     DepartmentRoom,
     EmployeeTitle,
+    SalaryPayment,
 )
 
 @click.command('seed-db')
@@ -24,16 +25,19 @@ def seed_db():
     Project.query.update({Project.manager_id: None})
     db.session.commit()
 
+    SalaryPayment.query.delete()
     EmployeeProject.query.delete()
     EmployeeRoom.query.delete()
     DepartmentRoom.query.delete()
-    Employee.query.delete()
     EmployeeTitle.query.delete()
-    Project.query.delete()
+    Employee.query.delete()        
+    Project.query.delete()        
     Room.query.delete()
-    Department.query.delete()
+    Department.query.delete()   
     Building.query.delete()
     Division.query.delete()
+    
+    
     db.session.commit()
 
     # Divisions
@@ -116,6 +120,32 @@ def seed_db():
         EmployeeTitle(title="HR Manager", salary=80000),
         EmployeeTitle(title="Division Analyst", salary=70000),
     ])
+    db.session.commit()
+
+    salaries = [
+        # employee_no, gross_salary, payment_date
+        (1, 90000, date(2025, 11, 30)),
+        (2, 75000, date(2025, 11, 30)),
+        (3, 80000, date(2025, 11, 30)),
+        (4, 70000, date(2025, 11, 30)),
+    ]
+
+    for emp_no, gross, pay_date in salaries:
+        federal_tax = gross * 0.10
+        state_tax = gross * 0.05
+        other_tax = gross * 0.03
+        net = gross - (federal_tax + state_tax + other_tax)
+        payment = SalaryPayment(
+            employee_no=emp_no,
+            payment_date=pay_date,
+            gross_salary=gross,
+            federal_tax=federal_tax,
+            state_tax=state_tax,
+            other_tax=other_tax,
+            net_salary=net
+        )
+        db.session.add(payment)
+
     db.session.commit()
 
     db.session.commit()
