@@ -8,9 +8,12 @@
         <tr>
             <th>Employee No</th>
             <th>Name</th>
-            <th>Phone Number</th>
             <th>Title</th>
             <th>Department</th>
+            <th>Division</th>
+            <th>Employment Start Date</th>
+            <th>Employment End Date</th>
+            <th>Is Active</th>
         </tr>
     </thead>
     <tbody>
@@ -18,9 +21,12 @@
         <tr>
             <td>{{ emp.employee_no }}</td>
             <td>{{ emp.employee_name }}</td>
-            <td>{{ emp.phone_number }}</td>
             <td>{{ emp.title }}</td>
             <td>{{ emp.department_name }}</td>
+            <td>{{ emp.division_name }}</td>
+            <td>{{ emp.employment_start_date.strftime('%Y-%m-%d') if emp.employment_start_date else '' }}</td>
+            <td>{{ emp.employment_end_date.strftime('%Y-%m-%d') if emp.employment_end_date else '' }}</td>
+            <td>{{ 'Yes' if emp.is_active else 'No' }}</td>
         </tr>
         {% endfor %}
     </tbody>

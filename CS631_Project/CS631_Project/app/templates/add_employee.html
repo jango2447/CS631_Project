@@ -21,7 +21,11 @@
 
     <div class="mb-3">
         <label for="department_name" class="form-label">Department</label>
-        <input type="text" class="form-control" id="department_name" name="department_name" required>
+        <select name="department_name" id="department_name" class="form-control" required>
+            {% for dept in departments %}
+            <option value="{{ dept.department_name }}">{{ dept.department_name }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <button type="submit" class="btn btn-primary">Add Employee</button>

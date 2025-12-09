@@ -36,7 +36,13 @@ class Employee(db.Model):
     employee_name = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     title = db.Column(db.String(50))
-    department_name = db.Column(db.String(50), db.ForeignKey('departments.department_name', name='fk_employees_department_name'))
+    department_name = db.Column(
+        db.String(50),
+        db.ForeignKey('departments.department_name', name='fk_employees_department_name')
+    )
+    is_active = db.Column(db.Boolean, default=True)
+    employment_start_date = db.Column(db.Date, nullable=True, default=date.today)
+    employment_end_date = db.Column(db.Date, nullable=True)
 
 class EmployeeProject(db.Model):
     __tablename__ = 'employee_projects'
