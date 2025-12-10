@@ -324,38 +324,83 @@
             return data;
         }
 
-        btnGetData.addEventListener('click', () => {
+        btnGetData.addEventListener('click', async () => {
             const selectedYear = yearSelect.value;
             if (!selectedYear) {
                 alert('Please select a year.');
                 return;
             }
 
-            const baseSalary = currentSalary || 0;
-            if (baseSalary <= 0) {
-                alert('Current salary not available.');
+            const empNo = detailEmpNo.textContent.trim();
+            if (!empNo) {
+                alert('Please select an employee first.');
                 return;
             }
 
-            // For demo, generate dummy data - replace with actual API call if needed
-            const salaryHistory = generateDummySalaryHistory(selectedYear, baseSalary);
+            try {
+                // Fetch salary history from backend API
+                const response = await fetch(`/salary-history/${empNo}/${selectedYear}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch salary history');
+                }
+                const data = await response.json();
 
-            historyTableBody.innerHTML = '';
-            salaryHistory.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.month}</td>
-                    <td>$${row.salary}</td>
-                    <td>$${row.fedTax}</td>
-                    <td>$${row.stateTax}</td>
-                    <td>$${row.otherTax}</td>
-                    <td>$${row.takeHome}</td>
-                `;
-                historyTableBody.appendChild(tr);
-            });
+                // Clear previous data and footer
+                historyTableBody.innerHTML = '';
+                // Remove existing footer if any
+                const existingFooter = historyTableContainer.querySelector('tfoot');
+                if (existingFooter) existingFooter.remove();
 
-            historyTableContainer.style.display = 'block';
+                // Initialize totals
+                let totalSalary = 0;
+                let totalFedTax = 0;
+                let totalStateTax = 0;
+                let totalOtherTaxes = 0;
+                let totalTakeHome = 0;
+
+                data.monthly_salary_history.forEach(item => {
+                    const monthName = new Date(data.year, item.month - 1).toLocaleString('default', { month: 'long' });
+
+                    totalSalary += item.salary;
+                    totalFedTax += item.federal_tax;
+                    totalStateTax += item.state_tax;
+                    totalOtherTaxes += item.other_taxes;
+                    totalTakeHome += item.take_home;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                <td>${monthName}</td>
+                <td>$${item.salary.toFixed(2)}</td>
+                <td>$${item.federal_tax.toFixed(2)}</td>
+                <td>$${item.state_tax.toFixed(2)}</td>
+                <td>$${item.other_taxes.toFixed(2)}</td>
+                <td>$${item.take_home.toFixed(2)}</td>
+            `;
+                    historyTableBody.appendChild(tr);
+                });
+
+                // Create footer row for totals
+                const tfoot = document.createElement('tfoot');
+                tfoot.innerHTML = `
+            <tr style="font-weight: bold; background-color: #f8f9fa;">
+                <td>Total</td>
+                <td>$${totalSalary.toFixed(2)}</td>
+                <td>$${totalFedTax.toFixed(2)}</td>
+                <td>$${totalStateTax.toFixed(2)}</td>
+                <td>$${totalOtherTaxes.toFixed(2)}</td>
+                <td>$${totalTakeHome.toFixed(2)}</td>
+            </tr>
+        `;
+
+                historyTableContainer.querySelector('table').appendChild(tfoot);
+
+                historyTableContainer.style.display = 'block';
+
+            } catch (error) {
+                alert('Error loading salary data: ' + error.message);
+            }
         });
+
 
     });
 </script>

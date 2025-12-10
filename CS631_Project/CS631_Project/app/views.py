@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, jsonify
 from datetime import datetime, date
-from .models import db, Employee, Department, Division, EmployeeSalary
+from calendar import monthrange
 from sqlalchemy.orm import aliased
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
+from .models import db, Employee, Department, Division, EmployeeSalary
 
 main_bp = Blueprint('main', __name__)
 
@@ -125,3 +126,56 @@ def set_salary():
     db.session.commit()
 
     return jsonify({'message': f'Salary updated successfully for Employee #{employee_no}. New salary: ${new_salary:.2f} ({percent_increase:.2f}% increase)'}), 200
+
+
+@main_bp.route('/salary-history/<int:employee_no>/<int:year>', methods=['GET'])
+def salary_history(employee_no, year):
+    # Get all salary records for employee that overlap with the year requested
+    records = EmployeeSalary.query.filter(
+        EmployeeSalary.employee_no == employee_no,
+        EmployeeSalary.start_date <= date(year, 12, 31),
+        or_(EmployeeSalary.end_date == None, EmployeeSalary.end_date >= date(year, 1, 1))
+    ).order_by(EmployeeSalary.start_date).all()
+
+    monthly_data = []
+
+    for month in range(1, 13):
+        month_start = date(year, month, 1)
+        month_end = date(year, month, monthrange(year, month)[1])
+
+        # Find the salary record that covers this month (latest by start_date)
+        salary_record_for_month = None
+        for record in records:
+            rec_end = record.end_date or date.today()
+            if record.start_date <= month_end and rec_end >= month_start:
+                # Among candidates, pick the one with the latest start_date <= month_end
+                if (salary_record_for_month is None or record.start_date > salary_record_for_month.start_date):
+                    salary_record_for_month = record
+        
+        if salary_record_for_month:
+            if salary_record_for_month.type == 'salary':
+                monthly_salary = salary_record_for_month.salary / 12
+            else:  # hourly
+                monthly_salary = salary_record_for_month.salary * 160
+        else:
+            monthly_salary = 0
+
+        fed_tax = monthly_salary * 0.10
+        state_tax = monthly_salary * 0.05
+        other_tax = monthly_salary * 0.03
+        take_home = monthly_salary - (fed_tax + state_tax + other_tax)
+
+        monthly_data.append({
+            "month": month,
+            "salary": round(monthly_salary, 2),
+            "federal_tax": round(fed_tax, 2),
+            "state_tax": round(state_tax, 2),
+            "other_taxes": round(other_tax, 2),
+            "take_home": round(take_home, 2)
+        })
+
+    return jsonify({
+        "employee_no": employee_no,
+        "year": year,
+        "monthly_salary_history": monthly_data
+    })
