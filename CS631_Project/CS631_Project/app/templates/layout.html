@@ -7,6 +7,19 @@
     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
     <script src="/static/scripts/modernizr-2.6.2.js"></script>
+
+    <style>
+        /* Selected row stays blue at all times */
+        .selected-row td {
+            background-color: #d0ebff !important;
+        }
+
+        /* Hover effect only applies to NON-selected rows */
+        table tbody tr:not(.selected-row):hover td {
+            background-color: #f1f3f5 !important;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -42,6 +55,19 @@
     <script src="/static/scripts/jquery-1.10.2.js"></script>
     <script src="/static/scripts/bootstrap.js"></script>
     <script src="/static/scripts/respond.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach(row => {
+                row.addEventListener("click", () => {
+                    rows.forEach(r => r.classList.remove("selected-row"));
+                    row.classList.add("selected-row");
+                });
+            });
+        });
+    </script>
     {% block scripts %}{% endblock %}
 
 </body>
