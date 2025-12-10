@@ -78,36 +78,6 @@ def human_resources():
 
     return render_template('human_resources.html', employees=employees)
 
-@main_bp.route('/add-employee', methods=['GET', 'POST'])
-def add_employee():
-    if request.method == 'POST':
-        # Retrieve form data
-        employee_name = request.form.get('employee_name')
-        phone_number = request.form.get('phone_number')
-        title = request.form.get('title')
-        department_name = request.form.get('department_name')
-
-        # Create new Employee instance
-        new_employee = Employee(
-            employee_name=employee_name,
-            phone_number=phone_number,
-            title=title,
-            department_name=department_name,
-            employment_start_date=date.today(),
-            is_active=True
-        )
-
-        # Add to DB and commit
-        db.session.add(new_employee)
-        db.session.commit()
-
-        flash('Employee added successfully!', 'success')
-        return redirect(url_for('main.human_resources'))
-
-    departments = Department.query.order_by(Department.department_name).all()
-    return render_template('add_employee.html', departments=departments)
-
-
 @main_bp.route('/set-salary', methods=['POST'])
 def set_salary():
     data = request.get_json()
@@ -116,37 +86,33 @@ def set_salary():
     percent_increase_str = data.get('percent_increase')
 
     if not employee_no:
-        return jsonify({"success": False, "message": "Employee number missing."}), 400
-
-    new_salary = None
-    percent_increase = None
+        return jsonify({'message': 'Employee number missing.'}), 400
 
     try:
-        if new_salary_str and new_salary_str.strip() != '':
-            new_salary = float(new_salary_str)
-        if percent_increase_str and percent_increase_str.strip() != '':
-            percent_increase = float(percent_increase_str)
+        new_salary = float(new_salary_str) if new_salary_str else None
+        percent_increase = float(percent_increase_str) if percent_increase_str else None
     except ValueError:
-        return jsonify({"success": False, "message": "Invalid input for salary or percent increase."}), 400
+        return jsonify({'message': 'Invalid input for salary or percent increase.'}), 400
 
     if new_salary is None and percent_increase is None:
-        return jsonify({"success": False, "message": "Please enter either a new salary or a percent increase."}), 400
+        return jsonify({'message': 'Please enter either a new salary or a percent increase.'}), 400
 
     current_salary_record = EmployeeSalary.query.filter_by(employee_no=employee_no, end_date=None).first()
     if not current_salary_record:
-        return jsonify({"success": False, "message": "Current salary record not found."}), 404
+        return jsonify({'message': 'Current salary record not found.'}), 404
 
     current_salary = current_salary_record.salary
 
     if new_salary is None and percent_increase is not None:
         new_salary = current_salary * (1 + percent_increase / 100)
-
     if percent_increase is None and new_salary is not None:
         percent_increase = ((new_salary - current_salary) / current_salary) * 100
 
+    # Update old salary record end_date
     current_salary_record.end_date = date.today()
     db.session.add(current_salary_record)
 
+    # Add new salary record
     new_salary_record = EmployeeSalary(
         employee_no=employee_no,
         salary=new_salary,
@@ -158,7 +124,4 @@ def set_salary():
 
     db.session.commit()
 
-    return jsonify({
-        "success": True,
-        "message": f"Salary updated successfully for Employee #{employee_no}. New salary: ${new_salary:.2f} ({percent_increase:.2f}% increase)"
-    })
+    return jsonify({'message': f'Salary updated successfully for Employee #{employee_no}. New salary: ${new_salary:.2f} ({percent_increase:.2f}% increase)'}), 200
