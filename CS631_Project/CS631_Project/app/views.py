@@ -183,3 +183,31 @@ def add_employee():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+@main_bp.route("/set-status", methods=["POST"])
+def set_status():
+    data = request.get_json()
+    emp_no = data.get("employee_no")
+    is_active = data.get("is_active")
+
+    if emp_no is None or is_active is None:
+        return jsonify({"error": "Missing employee_no or is_active"}), 400
+
+    try:
+        employee = Employee.query.filter_by(employee_no=emp_no).first()
+        if not employee:
+            return jsonify({"error": "Employee not found"}), 404
+
+        employee.is_active = is_active
+        if not is_active:
+            # Optional: set employment_end_date to today if making inactive
+            employee.employment_end_date = date.today()
+        else:
+            # Optional: reset end date if making active
+            employee.employment_end_date = None
+
+        db.session.commit()
+        return jsonify({"message": "Status updated successfully", "is_active": employee.is_active})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

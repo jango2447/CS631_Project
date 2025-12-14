@@ -1,5 +1,58 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    const btnSetStatus = document.getElementById('btn-set-status');
+    btnSetStatus.addEventListener('click', async () => {
+        console.log('Set Status button clicked');
+        const empNo = detailEmpNo.textContent.trim();
+        if (!empNo) {
+            alert("Please select an employee first.");
+            return;
+        }
+
+        // Determine new status based on button text
+        const setToInactive = btnSetStatus.textContent === 'Set to Inactive';
+        const newStatus = !setToInactive; // If button says Set to Inactive, newStatus = false (inactive)
+
+        try {
+            const response = await fetch('/set-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ employee_no: empNo, is_active: newStatus })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.error || 'Failed to update status');
+
+            // Update button text and color based on new status
+            if (newStatus) {
+                btnSetStatus.textContent = 'Set to Inactive';
+                btnSetStatus.style.backgroundColor = '#f8d7da';
+                btnSetStatus.style.color = '#842029';
+                btnSetStatus.classList.remove('btn-secondary');
+                btnSetStatus.classList.add('btn-danger');
+            } else {
+                btnSetStatus.textContent = 'Set to Active';
+                btnSetStatus.style.backgroundColor = '#d1e7dd';
+                btnSetStatus.style.color = '#0f5132';
+                btnSetStatus.classList.remove('btn-secondary');
+                btnSetStatus.classList.add('btn-success');
+            }
+
+            // Update employee row is_active cell text
+            const selectedRow = document.querySelector(`#employeeTable tbody tr[data-employee-no="${empNo}"]`);
+            if (selectedRow) {
+                selectedRow.querySelector('td:nth-child(8)').textContent = newStatus ? 'Yes' : 'No';
+            }
+
+            alert('Employee status updated successfully.');
+
+        } catch (err) {
+            alert('Error updating status: ' + err.message);
+        }
+    });
+
+
     // ADD EMPLOYEE MODAL LOGIC
     const addEmployeeBtn = document.getElementById('btn-add-employee');
     const addEmployeeModal = document.getElementById('addEmployeeModal');
@@ -80,8 +133,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-
     const rows = document.querySelectorAll('#employeeTable tbody tr');
     const detailEmpNo = document.getElementById('detail-empno');
     const detailName = document.getElementById('detail-name');
@@ -108,6 +159,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
             inputNewSalary.value = '';
             inputPercentIncrease.value = '';
+
+            const isActive = row.querySelector('td:nth-child(8)').textContent.trim() === 'Yes';
+            const btnSetStatus = document.getElementById('btn-set-status');
+            if (btnSetStatus) {
+                if (isActive) {
+                    btnSetStatus.textContent = 'Set to Inactive';
+                    btnSetStatus.style.backgroundColor = '#f8d7da';  // light red background
+                    btnSetStatus.style.color = '#842029';            // dark red text for contrast
+                    btnSetStatus.classList.remove('btn-secondary');
+                    btnSetStatus.classList.add('btn-danger');
+                } else {
+                    btnSetStatus.textContent = 'Set to Active';
+                    btnSetStatus.style.backgroundColor = '#d1e7dd';  // light green background
+                    btnSetStatus.style.color = '#0f5132';            // dark green text for contrast
+                    btnSetStatus.classList.remove('btn-secondary');
+                    btnSetStatus.classList.add('btn-success');
+                }
+            }
         });
     });
 
