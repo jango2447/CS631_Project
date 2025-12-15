@@ -4,7 +4,6 @@
 <h2>Project Manager</h2>
 <div class="row">
 
-    <!-- LEFT: PROJECT LIST -->
     <div class="col-md-8">
         <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 5px;">
             <table id="projectTable" class="table table-striped">
@@ -48,7 +47,7 @@
                                 <span class="text-muted">No team</span>
                             {% endfor %}
                         </td>
-                        <td>{{ p.worklogs | sum(attribute='hours_worked') }}</td>
+                        <td class="project-total-hours">{{ p.worklogs | sum(attribute='hours_worked') }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -56,7 +55,7 @@
         </div>
     </div>
 
-    <!-- RIGHT: DETAILS -->
+    
     <div class="col-md-4">
         <h3>Project Details</h3>
         <table id="projectDetails" class="table table-bordered">
@@ -96,10 +95,22 @@
                 <tr>
                     <th>Worklogs</th>
                     <td>
-                        <div id="worklog-list" class="mb-2"></div>
-                        <div class="d-flex gap-2">
-                            <input id="new-worklog-employee" class="form-control" placeholder="Employee Name">
-                            <input id="new-worklog-hours" class="form-control" type="number" placeholder="Hours">
+                        <table id="worklog-table" class="table table-sm table-bordered mb-2">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Hours</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="worklog-tbody">
+                               
+                            </tbody>
+                        </table>
+                        <div class="d-flex gap-2 mt-1">
+                            <input id="new-worklog-employee" class="form-control" placeholder="Employee Name" style="width:150px;">
+                            <input id="new-worklog-hours" class="form-control" type="number" placeholder="Hours" style="width:80px;">
                             <button id="btn-add-worklog" class="btn btn-sm btn-success">Add</button>
                         </div>
                         <div class="mt-1">Total Hours: <span id="total-hours">0</span></div>
@@ -119,7 +130,7 @@
     </div>
 </div>
 
-<!-- MILESTONE MODAL -->
+
 <div id="milestoneModal" class="modal-overlay" style="display:none;">
     <div class="modal-content" style="max-width:800px;">
         <span id="milestoneModalCloseBtn" class="close">&times;</span>

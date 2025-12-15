@@ -103,8 +103,13 @@ def update_project(project_id):
 
     sd = data.get("start_date")
     ed = data.get("end_date")
-    project.start_date = datetime.strptime(sd, "%Y-%m-%d") if sd else project.start_date
-    project.end_date = datetime.strptime(ed, "%Y-%m-%d") if ed else project.end_date
+    sd = data.get("start_date")
+    ed = data.get("end_date")
+
+    if sd is not None:project.start_date = datetime.strptime(sd, "%Y-%m-%d") if sd else None
+
+    if ed is not None:
+        project.end_date = datetime.strptime(ed, "%Y-%m-%d") if ed else None
 
     
     team_ids = data.get("team")
@@ -381,3 +386,61 @@ def set_status():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+@main_bp.route("/milestones/create", methods=["POST"])
+def create_milestone():
+    data = request.get_json()
+    project_id = data.get("project_id")
+    title = data.get("title")
+    description = data.get("description")
+    status = data.get("status")
+    due_date = data.get("due_date")
+
+    if not project_id or not title:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    project = Project.query.get_or_404(project_id)
+    if project.end_date and project.end_date < date.today():
+        return jsonify({"error": "Cannot add milestone: project end date has passed"}), 400
+
+    milestone = Milestone(
+        project_id=project_id,
+        title=title,
+        description=description,
+        status=status,
+        due_date=datetime.strptime(due_date, "%Y-%m-%d") if due_date else None
+    )
+
+    db.session.add(milestone)
+    db.session.commit()
+
+    return jsonify({
+        "id": milestone.id,
+        "title": milestone.title,
+        "description": milestone.description,
+        "status": milestone.status,
+        "due_date": milestone.due_date.strftime("%Y-%m-%d") if milestone.due_date else None
+    }), 201
+@main_bp.route("/milestones/<int:milestone_id>/update", methods=["POST"])
+def update_milestone(milestone_id):
+    milestone = Milestone.query.get_or_404(milestone_id)
+    data = request.get_json()
+
+    milestone.title = data.get("title", milestone.title)
+    milestone.description = data.get("description", milestone.description)
+    milestone.status = data.get("status", milestone.status)
+
+    due_date = data.get("due_date")
+    milestone.due_date = (
+        datetime.strptime(due_date, "%Y-%m-%d") if due_date else milestone.due_date
+    )
+
+    db.session.commit()
+
+    return jsonify({"message": "Milestone updated"}), 200
+@main_bp.route("/milestones/<int:milestone_id>/delete", methods=["POST"])
+def delete_milestone(milestone_id):
+    milestone = Milestone.query.get_or_404(milestone_id)
+    db.session.delete(milestone)
+    db.session.commit()
+
+    return jsonify({"message": "Milestone deleted"}), 200

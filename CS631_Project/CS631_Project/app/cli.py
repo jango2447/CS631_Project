@@ -387,183 +387,71 @@ def seed_db():
     # db.session.commit()
 
     # Projects
-    p1 = Project(name = "CSC 631 Database", description = "Final Project for CSC 631", project_number=501, budget=120000, start_date=date(2024, 1, 10), end_date=None, manager_id=1)
-    p2 = Project(name = "Website Design", description = "Manage and Create your own Website", project_number=502, budget=80000, start_date=date(2023, 5, 20), end_date=date(2024, 2, 20), manager_id=2)
-    p3 = Project(name="Mobile App Development",description="Develop a mobile application for campus use",project_number=503,budget=95000,start_date=date(2024, 2, 1),end_date=None,manager_id=1)
+   
+    today = date.today()
 
-    p4 = Project(
-        name="E-Commerce Website",
-        description="Create an online shopping platform",
-        project_number=504,
-        budget=150000,
-        start_date=date(2023, 6, 10),
-        end_date=None,
-        manager_id=2
-    )
+    p1 = Project(name="CSC 631 Database", description="Final Project for CSC 631", project_number=501, budget=120000,
+                 start_date=today - timedelta(days=180), end_date=today + timedelta(days=30), manager_id=1)
 
-    p5 = Project(
-        name="Cloud Migration",
-        description="Migrate systems to cloud infrastructure",
-        project_number=505,
-        budget=200000,
-        start_date=date(2023, 8, 1),
-        end_date=None,
-        manager_id=1
-    )
+    p2 = Project(name="Website Design", description="Manage and Create your own Website", project_number=502, budget=80000,
+                 start_date=today - timedelta(days=400), end_date=today - timedelta(days=10), manager_id=2)
 
-    p6 = Project(
-        name="Data Analytics Platform",
-        description="Enterprise data analytics solution",
-        project_number=506,
-        budget=175000,
-        start_date=date(2024, 1, 15),
-        end_date=None,
-        manager_id=3
-    )
+    p3 = Project(name="Mobile App Development", description="Develop a mobile application for campus use", project_number=503, budget=95000,
+                 start_date=today + timedelta(days=20), end_date=today + timedelta(days=120), manager_id=1)
 
-    p7 = Project(
-        name="AI Recommendation System",
-        description="Machine learning recommendation engine",
-        project_number=507,
-        budget=220000,
-        start_date=date(2023, 10, 5),
-        end_date=None,
-        manager_id=2
-    )
+    p4 = Project(name="E-Commerce Website", description="Create an online shopping platform", project_number=504, budget=150000,
+                 start_date=today - timedelta(days=200), end_date=today + timedelta(days=60), manager_id=2)
 
-    p8 = Project(
-        name="CRM Implementation",
-        description="Customer relationship management system",
-        project_number=508,
-        budget=85000,
-        start_date=date(2023, 7, 20),
-        end_date=date(2024, 1, 30),
-        manager_id=1
-    )
+    p5 = Project(name="Cloud Migration", description="Migrate systems to cloud infrastructure", project_number=505, budget=200000,
+                 start_date=today + timedelta(days=15), end_date=today + timedelta(days=150), manager_id=1)
 
-    p9 = Project(
-        name="Cybersecurity Upgrade",
-        description="Improve enterprise security posture",
-        project_number=509,
-        budget=120000,
-        start_date=date(2024, 3, 1),
-        end_date=None,
-        manager_id=3
-    )
+    p6 = Project(name="Data Analytics Platform", description="Enterprise data analytics solution", project_number=506, budget=175000,
+                 start_date=today - timedelta(days=90), end_date=today - timedelta(days=5), manager_id=3)
 
-    p10 = Project(
-        name="DevOps Pipeline Automation",
-        description="Automate CI/CD pipelines",
-        project_number=510,
-        budget=110000,
-        start_date=date(2023, 11, 10),
-        end_date=None,
-        manager_id=2
-    )
+    p7 = Project(name="AI Recommendation System", description="Machine learning recommendation engine", project_number=507, budget=220000,
+                 start_date=today + timedelta(days=50), end_date=today + timedelta(days=180), manager_id=2)
 
-    p11 = Project(
-        name="ERP System Upgrade",
-        description="Upgrade ERP modules",
-        project_number=511,
-        budget=180000,
-        start_date=date(2023, 5, 1),
-        end_date=date(2024, 4, 1),
-        manager_id=1
-    )
+    p8 = Project(name="CRM Implementation", description="Customer relationship management system", project_number=508, budget=85000,
+                 start_date=today - timedelta(days=300), end_date=today + timedelta(days=10), manager_id=1)
 
-    p12 = Project(
-        name="Blockchain Proof of Concept",
-        description="Blockchain-based transaction prototype",
-        project_number=512,
-        budget=130000,
-        start_date=date(2024, 2, 20),
-        end_date=None,
-        manager_id=3
-    )
+    p9 = Project(name="Cybersecurity Upgrade", description="Improve enterprise security posture", project_number=509, budget=120000,
+                 start_date=today - timedelta(days=60), end_date=today + timedelta(days=120), manager_id=3)
 
-    p13 = Project(
-        name="IoT Monitoring System",
-        description="IoT sensors for infrastructure monitoring",
-        project_number=513,
-        budget=140000,
-        start_date=date(2023, 9, 1),
-        end_date=date(2024, 1, 15),
-        manager_id=2
-    )
+    p10 = Project(name="DevOps Pipeline Automation", description="Automate CI/CD pipelines", project_number=510, budget=110000,
+                  start_date=today + timedelta(days=10), end_date=today + timedelta(days=100), manager_id=2)
 
-    p14 = Project(
-        name="UI/UX Redesign",
-        description="Redesign user interface and experience",
-        project_number=514,
-        budget=70000,
-        start_date=date(2023, 10, 1),
-        end_date=date(2024, 1, 15),
-        manager_id=1
-    )
+    p11 = Project(name="ERP System Upgrade", description="Upgrade ERP modules", project_number=511, budget=180000,
+                  start_date=today - timedelta(days=500), end_date=today - timedelta(days=50), manager_id=1)
 
-    p15 = Project(
-        name="API Integration Hub",
-        description="Centralized API integration system",
-        project_number=515,
-        budget=125000,
-        start_date=date(2024, 1, 25),
-        end_date=None,
-        manager_id=2
-    )
+    p12 = Project(name="Blockchain Proof of Concept", description="Blockchain-based transaction prototype", project_number=512, budget=130000,
+                  start_date=today + timedelta(days=30), end_date=today + timedelta(days=200), manager_id=3)
 
-    p16 = Project(
-        name="Machine Learning Pipeline",
-        description="Automated ML training pipeline",
-        project_number=516,
-        budget=210000,
-        start_date=date(2023, 12, 15),
-        end_date=None,
-        manager_id=3
-    )
+    p13 = Project(name="IoT Monitoring System", description="IoT sensors for infrastructure monitoring", project_number=513, budget=140000,
+                  start_date=today - timedelta(days=150), end_date=today + timedelta(days=90), manager_id=2)
 
-    p17 = Project(
-        name="Disaster Recovery Planning",
-        description="Design disaster recovery strategy",
-        project_number=517,
-        budget=90000,
-        start_date=date(2025, 3, 10),
-        end_date=None,
-        manager_id=1
-    )
+    p14 = Project(name="UI/UX Redesign", description="Redesign user interface and experience", project_number=514, budget=70000,
+                  start_date=today + timedelta(days=5), end_date=today + timedelta(days=60), manager_id=1)
 
-    p18 = Project(
-        name="Student Information System",
-        description="System for managing student records",
-        project_number=518,
-        budget=135000,
-        start_date=date(2025, 8, 15),
-        end_date=None,
-        manager_id=2
-    )
+    p15 = Project(name="API Integration Hub", description="Centralized API integration system", project_number=515, budget=125000,
+                  start_date=today - timedelta(days=250), end_date=today - timedelta(days=10), manager_id=2)
 
-    p19 = Project(
-        name="Online Learning Platform",
-        description="Web-based learning management system",
-        project_number=519,
-        budget=160000,
-        start_date=date(2023, 9, 10),
-        end_date=None,
-        manager_id=3
-    )
+    p16 = Project(name="Machine Learning Pipeline", description="Automated ML training pipeline", project_number=516, budget=210000,
+                  start_date=today + timedelta(days=40), end_date=today + timedelta(days=180), manager_id=3)
 
-    p20 = Project(
-        name="Library Management System",
-        description="Automate library operations",
-        project_number=520,
-        budget=95000,
-        start_date=date(2024, 1, 20),
-        end_date=None,
-        manager_id=1
-    )
-    db.session.add_all([p1, p2, p3, p4, p5, p6, p7, p8,
-        p9, p10, p11, p12, p13,
-        p14, p15, p16, p17, p18,
-        p19, p20])
+    p17 = Project(name="Disaster Recovery Planning", description="Design disaster recovery strategy", project_number=517, budget=90000,
+                  start_date=today - timedelta(days=100), end_date=today + timedelta(days=150), manager_id=1)
+
+    p18 = Project(name="Student Information System", description="System for managing student records", project_number=518, budget=135000,
+                  start_date=today + timedelta(days=60), end_date=today + timedelta(days=300), manager_id=2)
+
+    p19 = Project(name="Online Learning Platform", description="Web-based learning management system", project_number=519, budget=160000,
+                  start_date=today - timedelta(days=50), end_date=today + timedelta(days=80), manager_id=3)
+
+    p20 = Project(name="Library Management System", description="Automate library operations", project_number=520, budget=95000,
+                  start_date=today + timedelta(days=20), end_date=today + timedelta(days=150), manager_id=1)
+
+    db.session.add_all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10,
+                        p11, p12, p13, p14, p15, p16, p17, p18, p19, p20])
     db.session.commit()
     #Project Teams
 
@@ -723,8 +611,8 @@ def seed_db():
 
         for project_id, start in projects:
             project_obj = Project.query.filter_by(project_number=project_id).first()
-
-            milestone_status = "Completed" if project_obj and project_obj.end_date else None
+            today = date.today()
+            milestone_status = "Completed" if project_obj and project_obj.end_date and project_obj.end_date < today else None
 
             milestones.extend([
                 Milestone(
