@@ -22,13 +22,7 @@ class Building(db.Model):
     year_bought = db.Column(db.Integer)
     cost = db.Column(db.Float)
 
-# class Project(db.Model):
-#     __tablename__ = 'projects'
-#     project_number = db.Column(db.Integer, primary_key=True)
-#     budget = db.Column(db.Float)
-#     date_started = db.Column(db.Date)
-#     date_ended = db.Column(db.Date)
-#     manager_id = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))
+
 
 class Employee(db.Model):
     __tablename__ = 'employees'
@@ -73,7 +67,7 @@ class Milestone(db.Model):
 
     title = db.Column(db.String(150))
     description = db.Column(db.Text)
-    status = db.Column(db.String(20))   # No choices enforcement at DB level
+    status = db.Column(db.String(20)) 
     due_date = db.Column(db.Date)
 
     def __repr__(self):
@@ -160,7 +154,7 @@ class Project(db.Model):
     manager_id = db.Column(db.Integer, db.ForeignKey('employees.employee_no'))
     manager = db.relationship("Employee", back_populates="managed_projects")
     worklogs = db.relationship("WorkLog", back_populates="project", cascade="all, delete-orphan")
-    # Many-to-many using association table model
+   
     team = db.relationship(
         "ProjectTeam",
         back_populates="project",

@@ -1,6 +1,6 @@
 ﻿document.addEventListener('DOMContentLoaded', () => { 
 
-    /* ===================== ELEMENT REFERENCES ===================== */
+    //References
     const projectTableBody = document.querySelector('#projectTable tbody');
 
     const detailId = document.getElementById('detail-project-id');
@@ -28,7 +28,7 @@
     const worklogHours = document.getElementById('new-worklog-hours');
     const btnAddWorklog = document.getElementById('btn-add-worklog');
 
-    /* ===================== STATE ===================== */
+  
     let selectedProjectId = null;
     let selectedProjectRow = null;
     let selectedTeamIds = [];
@@ -37,7 +37,6 @@
     let allowMilestoneEditing = false;
     let allowWorkLogEditing = false;
 
-    /* ===================== HELPERS ===================== */
     function parseTeamIds() {
         selectedTeamIds = detailTeam.value
             .split(',')
@@ -52,10 +51,10 @@
         if (detailEnd.value) {
             const end = new Date(detailEnd.value);
             end.setHours(0,0,0,0);
-            // Lock start date only if end date has passed
+         
             detailStart.disabled = end < today;
         } else {
-            // No end date → editable
+           
             detailStart.disabled = false;
         }
     }
@@ -71,7 +70,7 @@
         selectedProjectRow.dataset.projectMilestones =
             JSON.stringify(selectedMilestones.filter(m => !m.editing));
     }
-
+    //Update Project Hours
     function updateProjectRowHours() {
         if (!selectedProjectRow) return;
         const total = selectedWorkLogs.reduce((s, w) => s + parseFloat(w.hours || 0), 0);
@@ -95,14 +94,14 @@
         detailEnd.value = '';
         detailTeam.value = '';
 
-        detailId.readOnly = false;      // ID editable
-        detailTeam.readOnly = false;    // ✅ Team editable
+        detailId.readOnly = false;      
+        detailTeam.readOnly = false;    
         applyStartDateLock();           
 
         renderWorkLogs();
     }
 
-    /* ===================== LOAD PROJECT ===================== */
+    
     projectTableBody.addEventListener('click', e => {
         const row = e.target.closest('tr');
         if (!row?.dataset.projectId) return;
@@ -111,7 +110,7 @@
         selectedProjectId = row.dataset.projectId;
 
         detailId.value = selectedProjectId;
-        detailId.readOnly = true;       // Lock ID
+        detailId.readOnly = true;      
 
         detailName.value = row.dataset.projectName || '';
         detailDesc.value = row.dataset.projectDesc || '';
@@ -120,12 +119,12 @@
         detailStart.value = row.dataset.projectStart || '';
         detailEnd.value = row.dataset.projectEnd || '';
         detailTeam.value = row.dataset.projectTeamIds || '';
-        detailTeam.readOnly = false;    // ✅ Team editable for existing projects
+        detailTeam.readOnly = false;    
         parseTeamIds();
 
         selectedMilestones = JSON.parse(row.dataset.projectMilestones || '[]');
         selectedWorkLogs = JSON.parse(row.dataset.projectWorklogs || '[]');
-
+        //Start date lock for Projects with end date in past
         const end = detailEnd.value ? new Date(detailEnd.value) : null;
         const today = new Date(); today.setHours(0,0,0,0);
         allowMilestoneEditing = !end || end >= today;
@@ -134,15 +133,15 @@
         applyStartDateLock();
         renderWorkLogs();
     });
-
+     
     detailEnd.addEventListener('change', applyStartDateLock);
 
-    /* ===================== SAVE / NEW / DELETE ===================== */
+  
     btnNew.addEventListener('click', e => {
         e.preventDefault();
         clearProjectForm();
     });
-
+    //Save Project
     btnSave.addEventListener('click', e => {
         e.preventDefault();
         if (!detailId.value || !detailName.value) {
@@ -161,7 +160,7 @@
             end_date: detailEnd.value || null,
             team: selectedTeamIds
         };
-
+        //Create or Update Project
         const url = selectedProjectId
             ? `/projects/${selectedProjectId}/update`
             : '/projects/create';
@@ -173,7 +172,7 @@
         })
         .then(res => res.ok ? location.reload() : alert('Save failed'));
     });
-
+    //Delete Project
     btnDelete.addEventListener('click', e => {
         e.preventDefault();
         if (!selectedProjectId) return alert('Select a project first');
@@ -183,7 +182,7 @@
             .then(() => location.reload());
     });
 
-    /* ===================== WORKLOGS ===================== */
+    //Worklogs
     function renderWorkLogs() {
         workLogTbody.innerHTML = '';
 
@@ -216,7 +215,7 @@
     btnAddWorklog.addEventListener('click', () => {
         if (!allowWorkLogEditing) return alert('Project ended');
 
-        // Allow adding worklogs for new projects
+       
         if (!selectedProjectId) selectedProjectId = 'temp-new-project';
 
         const employee = worklogEmployee.value.trim();
@@ -245,7 +244,7 @@
             worklogHours.value = '';
         });
     });
-
+    // Delete Worklog
     workLogTbody.addEventListener('click', e => {
         if (!e.target.classList.contains('btn-delete-worklog')) return;
 
@@ -259,7 +258,8 @@
             });
     });
 
-    /* ===================== MILESTONES ===================== */
+    //MILESTONES 
+
     function renderMilestones() {
         milestoneTableBody.innerHTML = '';
         milestoneProjectTitle.textContent = detailName.value || '';
@@ -305,7 +305,7 @@
             </td></tr>
         `);
     }
-
+    //View Milestones
     document.getElementById('btn-view-milestones').addEventListener('click', () => {
         if (!selectedProjectId) return alert('Select a project');
         renderMilestones();
@@ -316,7 +316,7 @@
         syncMilestonesToRow();
         milestoneModal.style.display = 'none';
     });
-
+    //Milestone Table Actions
     milestoneTableBody.addEventListener('click', e => {
         const tr = e.target.closest('tr');
         const i = tr?.dataset.index;
